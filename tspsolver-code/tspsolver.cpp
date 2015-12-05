@@ -21,6 +21,8 @@
  *  along with TSPSG.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
 #include "tspsolver.h"
 
 // #include <QCoreApplication>
@@ -34,8 +36,7 @@
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
 std::string qtStringArgInt(std::string str, int value) {
-
-  return "";
+  return "City " + itoa(value);
 }
 
 std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") {
@@ -43,14 +44,6 @@ std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") 
   std::copy(list.begin(), list.end() - 1, std::ostream_iterator<std::string>(oss, separator));
   oss << *list.rbegin();
   return oss.str();
-}
-
-double qtListAtGetValue(std::list<std::list<double> >& list, int r, int c) {
-  std::list<std::list<double> >::iterator rIt = list.begin();
-  std::advance(rIt, r);
-  std::list<double>::iterator cIt = (*rIt).begin();
-  std::advance(cIt, c);
-  return (*cIt);
 }
 
 namespace TSPSolver {
@@ -98,7 +91,7 @@ void CTSPSolver::cleanup(bool processEvents) {
  *  \c \%1 in \a city will be replaced by the city number.
  */
 std::string CTSPSolver::getSortedPath(const std::string &city, const std::string &separator) const {
-    if (!root || route.isEmpty() || (route.size() != nCities))
+    if (!root || route.empty() || (route.size() != nCities))
         return std::string();
 
     int i = 0; // We start from City 1
@@ -155,8 +148,7 @@ void CTSPSolver::setCleanupOnCancel(bool enable) {
  *
  * \todo TODO: Comment the algorithm.
  */
-SStep* CTSPSolver::solve(int numCities, const TMatrix &task)
-{
+SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     if (numCities < 3)
         return NULL;
 
@@ -413,7 +405,7 @@ bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
         return false;
     int i = nCol;
     while(true) {
-        if ((i = route.at(i)) == nRow) {//if ((i = route.value(i)) == nRow)
+        if ((i = route.at(i)) == nRow) { //if ((i = route.value(i)) == nRow)
             return true;
         }
         if (!route.count(i)) { //if (!route.contains(i))
