@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
 #include "tspsolver.h"
 
 // #include <QCoreApplication>
@@ -37,7 +38,9 @@
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
 std::string qtStringArgInt(std::string str, int value) {
-  return "City " + std::to_string(value);
+  std::stringstream ss;
+  ss << str << "(" << value << ")";
+  return ss.str();
 }
 
 std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") {

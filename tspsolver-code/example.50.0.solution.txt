@@ -1,0 +1,6 @@
+Resulting path:
+  City 1 -> City 24 -> City 12 -> City 28 -> City 36 -> City 30 -> City 46 -> City 40 -> City 29 -> City 26 -> City 11 -> City 6 -> City 15 -> City 41 -> City 49 -> City 18 -> City 25 -> City 42 -> City 22 -> City 19 -> City 21 -> City 13 -> City 44 -> City 16 -> City 23 -> City 37 -> City 45 -> City 10 -> City 4 -> City 32 -> City 50 -> City 31 -> City 43 -> City 14 -> City 27 -> City 3 -> City 35 -> City 2 -> City 5 -> City 48 -> City 7 -> City 34 -> City 38 -> City 9 -> City 47 -> City 17 -> City 33 -> City 39 -> City 8 -> City 20 -> City 1
+The price is 60 units.
+WARNING!!!
+This result is a record, but it may not be optimal.
+Iterations need to be continued to check whether this result is optimal or get an optimal one.
