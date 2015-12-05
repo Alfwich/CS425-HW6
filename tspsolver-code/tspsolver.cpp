@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 #include "tspsolver.h"
 
 // #include <QCoreApplication>
@@ -36,12 +37,12 @@
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
 std::string qtStringArgInt(std::string str, int value) {
-  return "City " + itoa(value);
+  return "City " + std::to_string(value);
 }
 
 std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") {
   std::ostringstream oss;
-  std::copy(list.begin(), list.end() - 1, std::ostream_iterator<std::string>(oss, separator));
+  std::copy(list.begin(), std::prev(list.end()), std::ostream_iterator<std::string>(oss, separator.c_str()));
   oss << *list.rbegin();
   return oss.str();
 }
@@ -74,11 +75,13 @@ CTSPSolver::CTSPSolver() {
  * \sa solve(), setCleanupOnCancel()
  */
 void CTSPSolver::cleanup(bool processEvents) {
+  /*
     route.clear();
     mayNotBeOptimal = false;
-    if (root != NULL) {
+    if(root != NULL) {
         deleteTree(root, processEvents);
     }
+  */
 }
 
 /*!
@@ -97,7 +100,7 @@ std::string CTSPSolver::getSortedPath(const std::string &city, const std::string
     int i = 0; // We start from City 1
     std::list<std::string> path;
     path.push_back(qtStringArgInt(city, 1)); // path << city.arg(1);
-    while ((i = route[i]) != 0) {
+    while ((i = route.at(i)) != 0) {
         path.push_back(qtStringArgInt(city, i+1)); //path << city.arg(i + 1);
     }
     // And finish in City 1, too
@@ -263,6 +266,8 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
 
     mayNotBeOptimal = (check < step->price);
 
+    std::cout << "Solution Step Price: " << step->price << std::endl;
+
     return root;
 }
 
@@ -278,10 +283,12 @@ bool CTSPSolver::wasCanceled() const {
 /*!
  * \brief Cancels the solution process.
  */
+ /*
 void CTSPSolver::cancel() {
     //QMutexLocker locker(&mutex);
     //canceled = true;
 }
+*/
 
 CTSPSolver::~CTSPSolver()
 {
@@ -350,17 +357,17 @@ void CTSPSolver::deleteTree(SStep *&root, bool processEvents) {
 void CTSPSolver::denormalize(TMatrix &matrix) const {
     for (int r = 0; r < nCities; r++) {
         for (int c = 0; c < nCities; c++) {
-            if ((r != c) && (matrix.at(r).at(c) == MAX_DOUBLE))
+            if ((r != c) && (matrix.at(r).at(c) == MAX_DOUBLE)) {
                 matrix[r][c] = INFINITY;
             }
         }
     }
 }
 
-std::list<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
+std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
     nRow = -1;
     nCol = -1;
-    std::list<SStep::SCandidate> alts;
+    std::vector<SStep::SCandidate> alts;
     SStep::SCandidate cand;
     double h = -1;
     double sum;

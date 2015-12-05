@@ -93,7 +93,7 @@ struct SStep {
     double price; //!< The price of travel to this step
 
     SCandidate candidate; //!< A candiadate for branching in the current step
-    std::list<SCandidate> alts; //!< A list of alternative branching candidates
+    std::vector <SCandidate> alts; //!< A list of alternative branching candidates
     SStep *pNode; //!< Pointer to the parent step
     SStep *plNode; //!< Pointer to the left branch step
     SStep *prNode; //!< Pointer to the right branch step
@@ -125,10 +125,10 @@ public:
     bool wasCanceled() const;
     ~CTSPSolver();
 
+/*
 public slots:
     void cancel();
 
-/*
 signals:
      // \brief This signal is emitted once every time a part of the route is found.
      // \param n Indicates the number of the route parts found.
@@ -145,7 +145,7 @@ private:
     double align(TMatrix &matrix);
     void deleteTree(SStep *&root, bool processEvents = false);
     void denormalize(TMatrix &matrix) const;
-    std::map<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
+    std::vector<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
     double findMinInCol(int nCol, const TMatrix &matrix, int exr = -1) const;
     double findMinInRow(int nRow, const TMatrix &matrix, int exc = -1) const;
     void finishRoute();

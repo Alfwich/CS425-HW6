@@ -2,6 +2,8 @@
 #include <vector>
 #include <iostream>
 
+using namespace TSPSolver;
+
 TMatrix ReadCostMatrix(); // Read in a cost matrix from the user
 void PrintMatrix(const TMatrix& matrix); // Print a cost matrix
 void SolveTSP(const TMatrix& matrix); // Solve a cost matrix
@@ -53,6 +55,10 @@ void PrintMatrix(const TMatrix& matrix)
     std::cout << std::endl;
 }
 
+int getTotalPath(SStep* solutionRoot) {
+  return 0;
+}
+
 void SolveTSP(const TMatrix& matrix)
 {
     CTSPSolver solver;
@@ -61,5 +67,8 @@ void SolveTSP(const TMatrix& matrix)
     std::string sortedPath = solver.getSortedPath("City");
 
     std::cout << "sorted path: " << sortedPath << std::endl;
+
+    int totalPathLength = solver.getTotalSteps();
+    std::cout << "Total Path Length: " << totalPathLength << std::endl;
 }
 
