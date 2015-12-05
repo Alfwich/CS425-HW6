@@ -34,11 +34,15 @@
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
 std::string qtStringArgInt(std::string str, int value) {
+
   return "";
 }
 
 std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") {
-  return "";
+  std::ostringstream oss;
+  std::copy(list.begin(), list.end() - 1, std::ostream_iterator<std::string>(oss, separator));
+  oss << *list.rbegin();
+  return oss.str();
 }
 
 double qtListAtGetValue(std::list<std::list<double> >& list, int r, int c) {
