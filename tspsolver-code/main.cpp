@@ -110,7 +110,7 @@ void SolveTSP(const TMatrix& matrix)
     CTSPSolver solver;
 
     SStep* solutionRoot = solver.solve(matrix.size(), matrix);
-    std::string sortedPath = solver.getSortedPath("City");
+    std::string sortedPath = solver.getSortedPath();
 
     std::cout << "sorted path: " << sortedPath << std::endl;
 
