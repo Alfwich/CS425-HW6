@@ -38,6 +38,8 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <ostringstream>
+#include <iterator>
 
 /*!
  * \def INFINITY
