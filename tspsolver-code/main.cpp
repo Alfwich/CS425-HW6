@@ -81,7 +81,7 @@ void ReadMatrixRow(TMatrix& matrix, size_t row, size_t numCities, std::istream& 
         is >> tmp;
 
         if (tmp == "-") {
-            matrix[row][i] == INFINITY;
+            matrix[row][i] = INFINITY;
         } else {
             matrix[row][i] = atof(tmp.c_str());
         }
