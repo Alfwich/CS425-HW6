@@ -23,14 +23,31 @@
 
 #include "tspsolver.h"
 
-#include <QCoreApplication>
-
+// #include <QCoreApplication>
+/*
 #ifdef DEBUG
 #   include <QDebug>
 #endif
+*/
 
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
 #define MAX_DOUBLE std::numeric_limits<double>::max()
+
+std::string qtStringArgInt(std::string str, int value) {
+  return "";
+}
+
+std::string qtListJoin(std::list<std::string>& list, std::string separator=" ") {
+  return "";
+}
+
+double qtListAtGetValue(std::list<std::list<double> >& list, int r, int c) {
+  std::list<std::list<double> >::iterator rIt = list.begin();
+  std::advance(rIt, r);
+  std::list<double>::iterator cIt = (*rIt).begin();
+  std::advance(cIt, c);
+  return (*cIt);
+}
 
 namespace TSPSolver {
 
@@ -38,17 +55,18 @@ namespace TSPSolver {
  * \brief Returns CTSPSolver's version ID.
  * \return A string: <b>\$Id: $Format:%h %ai %an$ $</b>.
  */
-QString CTSPSolver::getVersionId()
+std::string CTSPSolver::getVersionId()
 {
-    return QString("$Id: $Format:%h %ai %an$ $");
+    return std::string("0.1");
 }
 
 /*!
  * \brief Constructs CTSPSolver object.
  * \param parent A parent object.
  */
-CTSPSolver::CTSPSolver(QObject *parent)
-    : QObject(parent), cc(true), nCities(0), total(0), root(NULL) {}
+CTSPSolver::CTSPSolver() {
+
+}
 
 /*!
  * \brief Cleans up the object and frees up memory used by the solution tree.
@@ -58,12 +76,12 @@ CTSPSolver::CTSPSolver(QObject *parent)
  *
  * \sa solve(), setCleanupOnCancel()
  */
-void CTSPSolver::cleanup(bool processEvents)
-{
+void CTSPSolver::cleanup(bool processEvents) {
     route.clear();
     mayNotBeOptimal = false;
-    if (root != NULL)
+    if (root != NULL) {
         deleteTree(root, processEvents);
+    }
 }
 
 /*!
@@ -75,21 +93,20 @@ void CTSPSolver::cleanup(bool processEvents)
  *  The resulting path will be in the form \a city+\a separator+\a city+...+\a separator+\a city.
  *  \c \%1 in \a city will be replaced by the city number.
  */
-QString CTSPSolver::getSortedPath(const QString &city, const QString &separator) const
-{
+std::string CTSPSolver::getSortedPath(const std::string &city, const std::string &separator) const {
     if (!root || route.isEmpty() || (route.size() != nCities))
-        return QString();
+        return std::string();
 
-int i = 0; // We start from City 1
-QStringList path;
-    path << city.arg(1);
+    int i = 0; // We start from City 1
+    std::list<std::string> path;
+    path.push_back(qtStringArgInt(city, 1)); // path << city.arg(1);
     while ((i = route[i]) != 0) {
-        path << city.arg(i + 1);
+        path.push_back(qtStringArgInt(city, i+1)); //path << city.arg(i + 1);
     }
     // And finish in City 1, too
-    path << city.arg(1);
+    path.push_back(qtStringArgInt(city, 1)); //path << city.arg(1);
 
-    return path.join(separator);
+    return qtListJoin(path, separator);//path.join(separator);
 }
 
 /*!
@@ -97,8 +114,7 @@ QStringList path;
  * \return A total number of steps or \c 0 if no solution.
  * \note This is not always the same as the number of cities.
  */
-int CTSPSolver::getTotalSteps() const
-{
+int CTSPSolver::getTotalSteps() const {
     return total;
 }
 
@@ -109,8 +125,7 @@ int CTSPSolver::getTotalSteps() const
  *  The solution may need some further iterations to determine whether or not it is optimal.
  *  In such cases this function returns \c false.
  */
-bool CTSPSolver::isOptimal() const
-{
+bool CTSPSolver::isOptimal() const {
     return !mayNotBeOptimal;
 }
 
@@ -124,8 +139,7 @@ bool CTSPSolver::isOptimal() const
  *       Disabling cleanup and forgetting to do it manually may considerably increase the solution time for large tasks (with more than 15 cities).
  * \sa cleanup()
  */
-void CTSPSolver::setCleanupOnCancel(bool enable)
-{
+void CTSPSolver::setCleanupOnCancel(bool enable) {
     cc = enable;
 }
 
@@ -137,60 +151,66 @@ void CTSPSolver::setCleanupOnCancel(bool enable)
  *
  * \todo TODO: Comment the algorithm.
  */
-SStep *CTSPSolver::solve(int numCities, const TMatrix &task)
+SStep* CTSPSolver::solve(int numCities, const TMatrix &task)
 {
     if (numCities < 3)
         return NULL;
 
-QMutexLocker locker(&mutex);
+//QMutexLocker locker(&mutex);
     cleanup();
     canceled = false;
-    locker.unlock();
+//    locker.unlock();
 
     nCities = numCities;
 
-SStep *step = new SStep();
+    SStep *step = new SStep();
     step->matrix = task;
     // We need to distinguish the values forbidden by the user
     // from the values forbidden by the algorithm.
     // So we replace user's infinities by the maximum available double value.
     normalize(step->matrix);
-#ifdef DEBUG
-    qDebug() << step->matrix;
-#endif // DEBUG
+    /*
+    #ifdef DEBUG
+        qDebug() << step->matrix;
+    #endif // DEBUG
+    */
     step->price = align(step->matrix);
     root = step;
 
-SStep *left, *right;
-int nRow, nCol;
-bool firstStep = true;
-double check = INFINITY;
+    SStep *left, *right;
+    int nRow, nCol;
+    bool firstStep = true;
+    double check = INFINITY;
     total = 0;
     while (route.size() < nCities) {
         step->alts = findCandidate(step->matrix,nRow,nCol);
 
         while (hasSubCycles(nRow,nCol)) {
-#ifdef DEBUG
-            qDebug() << "Forbidden: (" << nRow << ";" << nCol << ")";
-#endif // DEBUG
+          /*
+          #ifdef DEBUG
+                      qDebug() << "Forbidden: (" << nRow << ";" << nCol << ")";
+          #endif // DEBUG
+          */
             step->matrix[nRow][nCol] = INFINITY;
             step->price += align(step->matrix);
             step->alts = findCandidate(step->matrix,nRow,nCol);
         }
 
-#ifdef DEBUG
-        qDebug() /*<< step->matrix*/ << "Selected: (" << nRow << ";" << nCol << ")";
-        qDebug() << "Alternate:" << step->alts;
-        qDebug() << "Step price:" << step->price << endl;
-#endif // DEBUG
+        /*
+        #ifdef DEBUG
+                qDebug() << "Selected: (" << nRow << ";" << nCol << ")";
+                qDebug() << "Alternate:" << step->alts;
+                qDebug() << "Step price:" << step->price << endl;
+        #endif // DEBUG
+        */
 
-        locker.relock();
+        //locker.relock();
         if ((nRow == -1) || (nCol == -1) || canceled) {
             if (canceled && cc)
                 cleanup();
             return NULL;
         }
-        locker.unlock();
+        //locker.unlock();
 
         // Route with (nRow,nCol) path
         right = new SStep();
@@ -227,7 +247,7 @@ double check = INFINITY;
             step->next = SStep::RightBranch;
             step = right;
             route[nRow] = nCol;
-            emit routePartFound(route.size());
+            //emit routePartFound(route.size()); Some sort of QT magic here
             if (firstStep) {
                 check = left->price;
                 firstStep = false;
@@ -236,7 +256,7 @@ double check = INFINITY;
             // Route without (nRow,nCol) path is cheaper
             step->next = SStep::LeftBranch;
             step = left;
-            QCoreApplication::processEvents();
+            //QCoreApplication::processEvents();
             if (firstStep) {
                 check = right->price;
                 firstStep = false;
@@ -254,19 +274,17 @@ double check = INFINITY;
  * \brief Indicates whether or not the solution process was canceled.
  * \return \c true if the solution process was canceled, otherwise \c false.
  */
-bool CTSPSolver::wasCanceled() const
-{
-QMutexLocker locker(&mutex);
-    return canceled;
+bool CTSPSolver::wasCanceled() const {
+    //QMutexLocker locker(&mutex);
+    return false;//return canceled;
 }
 
 /*!
  * \brief Cancels the solution process.
  */
-void CTSPSolver::cancel()
-{
-QMutexLocker locker(&mutex);
-    canceled = true;
+void CTSPSolver::cancel() {
+    //QMutexLocker locker(&mutex);
+    //canceled = true;
 }
 
 CTSPSolver::~CTSPSolver()
@@ -277,8 +295,7 @@ CTSPSolver::~CTSPSolver()
 
 /* Privates **********************************************************/
 
-double CTSPSolver::align(TMatrix &matrix)
-{
+double CTSPSolver::align(TMatrix &matrix) {
 double r = 0;
 double min;
     for (int k = 0; k < nCities; k++) {
@@ -300,15 +317,14 @@ double min;
     return (r != MAX_DOUBLE) ? r : INFINITY;
 }
 
-void CTSPSolver::deleteTree(SStep *&root, bool processEvents)
-{
+void CTSPSolver::deleteTree(SStep *&root, bool processEvents) {
     if (root == NULL)
         return;
-SStep *step = root;
-SStep *parent;
-    forever {
-        if (processEvents)
-            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    SStep *step = root;
+    SStep *parent;
+    while(true) {
+        //if (processEvents)
+        //  QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
         if (step->plNode != NULL) {
             // We have left child node - going inside it
             step = step->plNode;
@@ -335,22 +351,23 @@ SStep *parent;
     }
 }
 
-void CTSPSolver::denormalize(TMatrix &matrix) const
-{
-    for (int r = 0; r < nCities; r++)
-        for (int c = 0; c < nCities; c++)
+void CTSPSolver::denormalize(TMatrix &matrix) const {
+    for (int r = 0; r < nCities; r++) {
+        for (int c = 0; c < nCities; c++) {
             if ((r != c) && (matrix.at(r).at(c) == MAX_DOUBLE))
                 matrix[r][c] = INFINITY;
+            }
+        }
+    }
 }
 
-QList<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const
-{
+std::list<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
     nRow = -1;
     nCol = -1;
-QList<SStep::SCandidate> alts;
-SStep::SCandidate cand;
-double h = -1;
-double sum;
+    std::list<SStep::SCandidate> alts;
+    SStep::SCandidate cand;
+    double h = -1;
+    double sum;
     for (int r = 0; r < nCities; r++)
         for (int c = 0; c < nCities; c++)
             if (matrix.at(r).at(c) == 0) {
@@ -363,24 +380,22 @@ double sum;
                 } else if ((sum == h) && !hasSubCycles(r,c)) {
                     cand.nRow = r;
                     cand.nCol = c;
-                    alts.append(cand);
+                    alts.push_back(cand);
                 }
             }
     return alts;
 }
 
-double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const
-{
-double min = INFINITY;
+double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const {
+    double min = INFINITY;
     for (int k = 0; k < nCities; k++)
         if ((k != exr) && (min > matrix.at(k).at(nCol)))
             min = matrix.at(k).at(nCol);
     return (min == INFINITY) ? 0 : min;
 }
 
-double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const
-{
-double min = INFINITY;
+double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const {
+    double min = INFINITY;
     for (int k = 0; k < nCities; k++) {
         if (((k != exc)) && (min > matrix.at(nRow).at(k)))
             min = matrix.at(nRow).at(k);
@@ -388,37 +403,36 @@ double min = INFINITY;
     return (min == INFINITY) ? 0 : min;
 }
 
-bool CTSPSolver::hasSubCycles(int nRow, int nCol) const
-{
-    if ((nRow < 0) || (nCol < 0) || route.isEmpty() || !(route.size() < nCities - 1) || !route.contains(nCol))
+bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
+    //if ((nRow < 0) || (nCol < 0) || route.isEmpty() || !(route.size() < nCities - 1) || !route.contains(nCol))
+    if ((nRow < 0) || (nCol < 0) || route.empty() || !(route.size() < nCities - 1) || !route.count(nCol))
         return false;
-int i = nCol;
-    forever {
-        if ((i = route.value(i)) == nRow)
+    int i = nCol;
+    while(true) {
+        if ((i = route.at(i)) == nRow) {//if ((i = route.value(i)) == nRow)
             return true;
-        if (!route.contains(i))
+        }
+        if (!route.count(i)) { //if (!route.contains(i))
             return false;
+        }
     }
     return false;
 }
 
-void CTSPSolver::normalize(TMatrix &matrix) const
-{
+void CTSPSolver::normalize(TMatrix &matrix) const {
     for (int r = 0; r < nCities; r++)
         for (int c = 0; c < nCities; c++)
             if ((r != c) && (matrix.at(r).at(c) == INFINITY))
                 matrix[r][c] = MAX_DOUBLE;
 }
 
-void CTSPSolver::subCol(TMatrix &matrix, int nCol, double val)
-{
+void CTSPSolver::subCol(TMatrix &matrix, int nCol, double val) {
     for (int k = 0; k < nCities; k++)
         if (k != nCol)
             matrix[k][nCol] -= val;
 }
 
-void CTSPSolver::subRow(TMatrix &matrix, int nRow, double val)
-{
+void CTSPSolver::subRow(TMatrix &matrix, int nRow, double val) {
     for (int k = 0; k < nCities; k++)
         if (k != nRow)
             matrix[nRow][k] -= val;
@@ -426,6 +440,7 @@ void CTSPSolver::subRow(TMatrix &matrix, int nRow, double val)
 
 }
 
+/*
 #ifdef DEBUG
 QDebug operator<<(QDebug dbg, const TSPSolver::TMatrix &matrix)
 {
@@ -443,3 +458,5 @@ QDebug operator<<(QDebug dbg, const TSPSolver::SStep::SCandidate &cand)
     return dbg;
 }
 #endif // DEBUG
+
+*/

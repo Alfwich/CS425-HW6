@@ -30,10 +30,14 @@
 
 #include <limits>
 
-#include <QHash>
-#include <QMutex>
-#include <QObject>
-#include <QStringList>
+//#include <QHash>
+#include <map>
+//#include <QMutex>
+//#include <QObject>
+//#include <QStringList>
+#include <list>
+#include <vector>
+#include <string>
 
 /*!
  * \def INFINITY
@@ -53,7 +57,7 @@
 namespace TSPSolver {
 
 //! A matrix of city-to-city travel costs
-typedef QList<QList<double> > TMatrix;
+typedef std::vector<std::vector<double> > TMatrix;
 
 /*!
  * \brief This structure represents one step of solving.
@@ -87,7 +91,7 @@ struct SStep {
     double price; //!< The price of travel to this step
 
     SCandidate candidate; //!< A candiadate for branching in the current step
-    QList<SCandidate> alts; //!< A list of alternative branching candidates
+    std::list<SCandidate> alts; //!< A list of alternative branching candidates
     SStep *pNode; //!< Pointer to the parent step
     SStep *plNode; //!< Pointer to the left branch step
     SStep *prNode; //!< Pointer to the right branch step
@@ -105,16 +109,13 @@ struct SStep {
  * \brief This class solves Travelling Salesman Problem task.
  * \author Copyright &copy; 2007-2014 Oleksii Serdiuk <contacts[at]oleksii[dot]name>
  */
-class CTSPSolver: public QObject
-{
-    Q_OBJECT
-
+class CTSPSolver {
 public:
-    static QString getVersionId();
+    static std::string getVersionId();
 
-    CTSPSolver(QObject *parent = NULL);
+    CTSPSolver();
     void cleanup(bool processEvents = false);
-    QString getSortedPath(const QString &city, const QString &separator = QString(" -> ")) const;
+    std::string getSortedPath(const std::string &city, const std::string &separator = std::string(" -> ")) const;
     int getTotalSteps() const;
     bool isOptimal() const;
     void setCleanupOnCancel(bool enable = true);
@@ -125,24 +126,24 @@ public:
 public slots:
     void cancel();
 
+/*
 signals:
-    /*!
-     * \brief This signal is emitted once every time a part of the route is found.
-     * \param n Indicates the number of the route parts found.
-     */
+     // \brief This signal is emitted once every time a part of the route is found.
+     // \param n Indicates the number of the route parts found.
     void routePartFound(int n);
+*/
 
 private:
     bool mayNotBeOptimal, canceled, cc;
     int nCities, total;
     SStep *root;
-    QHash<int,int> route;
-    mutable QMutex mutex;
+    std::map<int,int> route;
+//    mutable QMutex mutex;
 
     double align(TMatrix &matrix);
     void deleteTree(SStep *&root, bool processEvents = false);
     void denormalize(TMatrix &matrix) const;
-    QList<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
+    std::map<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
     double findMinInCol(int nCol, const TMatrix &matrix, int exr = -1) const;
     double findMinInRow(int nRow, const TMatrix &matrix, int exc = -1) const;
     void finishRoute();
@@ -154,9 +155,11 @@ private:
 
 }
 
+/*
 #ifdef DEBUG
 QDebug operator<<(QDebug dbg, const TSPSolver::TMatrix &matrix);
 QDebug operator<<(QDebug dbg, const TSPSolver::SStep::SCandidate &candidate);
 #endif // DEBUG
+*/
 
 #endif // TSPSOLVER_H
