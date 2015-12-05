@@ -38,7 +38,7 @@
 #include <list>
 #include <vector>
 #include <string>
-#include <ostringstream>
+#include <sstream>
 #include <iterator>
 
 /*!
