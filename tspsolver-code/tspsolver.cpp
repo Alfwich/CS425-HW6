@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
 #include "tspsolver.h"
 
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
