@@ -29,12 +29,7 @@
 #define TSPSOLVER_H
 
 #include <limits>
-
-//#include <QHash>
 #include <map>
-//#include <QMutex>
-//#include <QObject>
-//#include <QStringList>
 #include <list>
 #include <vector>
 #include <string>
@@ -76,6 +71,7 @@ struct SStep {
         SCandidate() {
             nCol = nRow = -1;
         }
+
         //! An operator == implementation
         bool operator ==(const SCandidate &cand) const {
             return ((cand.nRow == nRow) && (cand.nCol == nCol));
@@ -116,34 +112,21 @@ public:
     static std::string getVersionId();
 
     CTSPSolver();
-    void cleanup(bool processEvents = false);
-    std::string getSortedPath(const std::string &city, const std::string &separator = std::string(" -> ")) const;
+    std::string getSortedPath(const std::string &separator = std::string(" -> ")) const;
     int getTotalSteps() const;
     bool isOptimal() const;
-    void setCleanupOnCancel(bool enable = true);
     SStep *solve(int numCities, const TMatrix &task);
-    bool wasCanceled() const;
     ~CTSPSolver();
 
-/*
-public slots:
-    void cancel();
-
-signals:
-     // \brief This signal is emitted once every time a part of the route is found.
-     // \param n Indicates the number of the route parts found.
-    void routePartFound(int n);
-*/
-
 private:
-    bool mayNotBeOptimal, canceled, cc;
-    int nCities, total;
+    bool mayNotBeOptimal;
+    size_t nCities;
+    int total;
     SStep *root;
     std::map<int,int> route;
-//    mutable QMutex mutex;
 
     double align(TMatrix &matrix);
-    void deleteTree(SStep *&root, bool processEvents = false);
+    void deleteTree(SStep *&root);
     void denormalize(TMatrix &matrix) const;
     std::vector<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
     double findMinInCol(int nCol, const TMatrix &matrix, int exr = -1) const;
@@ -156,12 +139,5 @@ private:
 };
 
 }
-
-/*
-#ifdef DEBUG
-QDebug operator<<(QDebug dbg, const TSPSolver::TMatrix &matrix);
-QDebug operator<<(QDebug dbg, const TSPSolver::SStep::SCandidate &candidate);
-#endif // DEBUG
-*/
 
 #endif // TSPSOLVER_H
