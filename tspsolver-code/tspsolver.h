@@ -114,6 +114,7 @@ public:
     CTSPSolver();
     std::string getSortedPath(const std::string &separator = std::string(" -> ")) const;
     int getTotalSteps() const;
+    int getTotalCost() const;
     bool isOptimal() const;
     SStep *solve(int numCities, const TMatrix &task);
     ~CTSPSolver();
@@ -122,6 +123,7 @@ private:
     bool mayNotBeOptimal;
     size_t nCities;
     int total;
+    int totalCost;
     SStep *root;
     std::map<int,int> route;
 

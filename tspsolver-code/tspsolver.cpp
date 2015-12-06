@@ -91,6 +91,10 @@ int CTSPSolver::getTotalSteps() const {
     return total;
 }
 
+int CTSPSolver::getTotalCost() const {
+  return totalCost;
+}
+
 /*!
  * \brief Indicates whether or not the solution is definitely optimal.
  * \return \c true if the solution is definitely optimal, otherwise \c false.
@@ -205,7 +209,8 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     }
 
     mayNotBeOptimal = (check < step->price);
-    std::cout << "Solution Step Price: " << step->price << std::endl;
+    totalCost = step->price;
+    
     return root;
 }
 
@@ -336,18 +341,16 @@ double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const 
 }
 
 bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
-    //if ((nRow < 0) || (nCol < 0) || route.isEmpty() || !(route.size() < nCities - 1) || !route.contains(nCol))
     if ((nRow < 0) || (nCol < 0) || route.empty() || !(route.size() < nCities - 1) || !route.count(nCol)) {
         return false;
     }
 
     int i = nCol;
-
     while(true) {
-        if ((i = route.at(i)) == nRow) { //if ((i = route.value(i)) == nRow)
+        if ((i = route.at(i)) == nRow) {
             return true;
         }
-        if (!route.count(i)) { //if (!route.contains(i))
+        if (!route.count(i)) {
             return false;
         }
     }
