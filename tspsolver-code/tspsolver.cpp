@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
+#include <string>
 #include "tspsolver.h"
 
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
@@ -36,6 +37,12 @@ std::string ListJoin(std::list<std::string>& list, std::string separator=" ") {
   std::copy(list.begin(), std::prev(list.end()), std::ostream_iterator<std::string>(oss, separator.c_str()));
   oss << *list.rbegin();
   return oss.str();
+}
+
+std::string getCityName(std::string prefix, int index) {
+  std::stringstream ss;
+  ss << prefix << " " << index;
+  return ss.str();
 }
 
 namespace TSPSolver {
@@ -66,7 +73,7 @@ std::string CTSPSolver::getSortedPath(const std::string &separator) const {
     path.push_back("City 1");
 
     while ((i = route.at(i)) != 0) {
-        path.push_back("City " + std::to_string(i+1));
+        path.push_back(getCityName("City", i+1));
     }
 
     // And finish in City 1, too
