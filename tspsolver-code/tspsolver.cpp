@@ -120,37 +120,40 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     }
 
     nCities = numCities;
+    SStep *step = new SStep(); // Initial node for the solution
+    step->matrix = task; // Copy the initial cost matrix
 
-    SStep *step = new SStep();
-    step->matrix = task;
+    normalize(step->matrix); // Replace the infinity references in the cost matrix
+                             // by the maximum available double value.
 
-    // We need to distinguish the values forbidden by the user
-    // from the values forbidden by the algorithm.
-    // So we replace user's infinities by the maximum available double value.
-    normalize(step->matrix);
+    step->price = align(step->matrix); // align the cost matrix and assign a lower bound
+    root = step; // Sets the root node for the tree
 
-    step->price = align(step->matrix);
-    root = step;
-
-    SStep *left, *right;
+    SStep *left, *right; // Some config
     int nRow, nCol;
     bool firstStep = true;
     double check = INFINITY;
     total = 0;
     while (route.size() < nCities) {
-        step->alts = findCandidate(step->matrix,nRow,nCol);
+        // For this step setup the alternative paths while also setting the nRow nCol for the next transition
+        step->alts = findCandidate(step->matrix, nRow, nCol);
 
+        // Continuously refine the step's cost matrix while we have subcycles
+        // Updates the price and alternatives
         while (hasSubCycles(nRow,nCol)) {
             step->matrix[nRow][nCol] = INFINITY;
             step->price += align(step->matrix);
             step->alts = findCandidate(step->matrix,nRow,nCol);
         }
 
+        // A path could not be generated
         if ((nRow == -1) || (nCol == -1)) {
             return NULL;
         }
 
-        // Route with (nRow,nCol) path
+        // Create the right child for the current step. This will invalidate the nRow and nCol
+        // for the right child and update the right child's cost. We also invalidate the nRow, nCol
+        // from further consideration
         right = new SStep();
         right->pNode = step;
         right->matrix = step->matrix;
@@ -169,7 +172,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         right->matrix[nCol][nRow] = INFINITY;
         right->matrix[nRow][nCol] = INFINITY;
 
-        // Route without (nRow,nCol) path
+        // Create the left child for the current step and invalidate nRow and nCol
         left = new SStep();
         left->pNode = step;
         left->matrix = step->matrix;
@@ -184,8 +187,8 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // This matrix is not used anymore. Restoring infinities back.
         denormalize(step->matrix);
 
+        // Route with (nRow, nCol) path is cheaper
         if (right->price <= left->price) {
-            // Route with (nRow,nCol) path is cheaper
             step->next = SStep::RightBranch;
             step = right;
             route[nRow] = nCol;
@@ -194,8 +197,9 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
                 check = left->price;
                 firstStep = false;
             }
+
+        // Route without (nRow,nCol) path is cheaper
         } else {
-            // Route without (nRow,nCol) path is cheaper
             step->next = SStep::LeftBranch;
             step = left;
 
@@ -210,7 +214,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
 
     mayNotBeOptimal = (check < step->price);
     totalCost = step->price;
-    
+
     return root;
 }
 
@@ -223,30 +227,39 @@ CTSPSolver::~CTSPSolver()
 
 /* Privates **********************************************************/
 
+// matrix: The cost matrix to align
+// Returns a lower bound for the cost matrix
 double CTSPSolver::align(TMatrix &matrix) {
     double r = 0;
     double min;
 
+    // Do row subtraction from the matrix with the min row value per row
     for (int k = 0; k < nCities; k++) {
-        min = findMinInRow(k,matrix);
+        min = findMinInRow(k, matrix);
         if (min > 0) {
             r += min;
-            if (min < MAX_DOUBLE)
-                subRow(matrix,k,min);
+            if (min < MAX_DOUBLE) {
+                subRow(matrix, k, min);
+            }
         }
     }
 
+    // Do col subtraction from the matrix with the min col value per col
     for (int k = 0; k < nCities; k++) {
-        min = findMinInCol(k,matrix);
+        min = findMinInCol(k, matrix);
         if (min > 0) {
             r += min;
-            if (min < MAX_DOUBLE)
-                subCol(matrix,k,min);
+            if (min < MAX_DOUBLE) {
+
+                subCol(matrix, k, min);
+            }
         }
     }
+
     return (r != MAX_DOUBLE) ? r : INFINITY;
 }
 
+// Cleanup Process
 void CTSPSolver::deleteTree(SStep *&root) {
     if (root == NULL)
         return;
@@ -279,16 +292,19 @@ void CTSPSolver::deleteTree(SStep *&root) {
     }
 }
 
+// Replaces every instance of MAX_DOUBLE with INFINITY in the cost matrix
+// matrix: The cost matrix
 void CTSPSolver::denormalize(TMatrix &matrix) const {
     for (int r = 0; r < nCities; r++) {
         for (int c = 0; c < nCities; c++) {
-            if ((r != c) && (matrix.at(r).at(c) == MAX_DOUBLE)) {
+            if (matrix.at(r).at(c) == MAX_DOUBLE) {
                 matrix[r][c] = INFINITY;
             }
         }
     }
 }
 
+// Return an vector of canidate path selections
 std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
     nRow = -1;
     nCol = -1;
@@ -297,16 +313,22 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
     double h = -1;
     double sum;
 
+    // For each row and col check for canidate paths
     for (int r = 0; r < nCities; r++) {
         for (int c = 0; c < nCities; c++) {
+            // Choose edges that are the min for the row and column
             if (matrix.at(r).at(c) == 0) {
-                sum = findMinInRow(r,matrix,c) + findMinInCol(c,matrix,r);
+                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
+
+                // If we found another min value for the row or col then reset the alternatives
+                // vector and set the next row and col to this node
                 if (sum > h) {
                     h = sum;
                     nRow = r;
                     nCol = c;
                     alts.clear();
-                } else if ((sum == h) && !hasSubCycles(r,c)) {
+                // If there is an equivalent path without subcycles push it into the alternative vector
+                } else if ((sum == h) && !hasSubCycles(r ,c)) {
                     cand.nRow = r;
                     cand.nCol = c;
                     alts.push_back(cand);
@@ -318,6 +340,9 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
     return alts;
 }
 
+// nCol: The col number
+// matrix: The cost matrix
+// exr: row to exclude from the min calculation
 double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const {
     double min = INFINITY;
     for (int k = 0; k < nCities; k++) {
@@ -329,6 +354,9 @@ double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const 
     return (min == INFINITY) ? 0 : min;
 }
 
+// nRow: The row number
+// matrix: The cost matrix
+// exc: column to exclude from the min calculation
 double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const {
     double min = INFINITY;
     for (int k = 0; k < nCities; k++) {
@@ -340,6 +368,7 @@ double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const 
     return (min == INFINITY) ? 0 : min;
 }
 
+// Detects if a route has sub cycles
 bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
     if ((nRow < 0) || (nCol < 0) || route.empty() || !(route.size() < nCities - 1) || !route.count(nCol)) {
         return false;
@@ -350,6 +379,7 @@ bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
         if ((i = route.at(i)) == nRow) {
             return true;
         }
+
         if (!route.count(i)) {
             return false;
         }
@@ -358,16 +388,21 @@ bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
     return false;
 }
 
+// Replaces every instance of INFINITY with MAX_DOUBLE in the cost matrix
+// matrix: The cost matrix
 void CTSPSolver::normalize(TMatrix &matrix) const {
     for (int r = 0; r < nCities; r++) {
         for (int c = 0; c < nCities; c++) {
-            if ((r != c) && (matrix.at(r).at(c) == INFINITY)) {
+            if (matrix.at(r).at(c) == INFINITY) {
                 matrix[r][c] = MAX_DOUBLE;
             }
         }
     }
 }
 
+// matrix: The cost matrix
+// nCol: The col to operate on
+// val: The amount to remove from each element in the col
 void CTSPSolver::subCol(TMatrix &matrix, int nCol, double val) {
     for (int k = 0; k < nCities; k++) {
         if (k != nCol) {
@@ -376,6 +411,9 @@ void CTSPSolver::subCol(TMatrix &matrix, int nCol, double val) {
     }
 }
 
+// matrix: The cost matrix
+// nRow: The row to operate on
+// val: The amount to remove from each element in the row
 void CTSPSolver::subRow(TMatrix &matrix, int nRow, double val) {
     for (int k = 0; k < nCities; k++) {
         if (k != nRow) {

@@ -1,0 +1,18 @@
+CS425: Homework 6/7
+Cameron Hall, Arthur Wuterich
+
+Algorithm Selection:
+  TSP Branch and Bound Approach
+
+Algorithm Explanation:
+  Start with the cheapest path
+  Repeat while tour is less than number of cities:
+    Perform matrix align with initial cost matrix on path to find lower bound
+    Find path(s) with cost equal to lower bound.
+    Update the right cost matrix to include the cheapest path and cost.
+    Compute new lower bound both including and excluding the chosen path.
+    Repeat algorithm with the right path and updated cost matrix
+
+Resources:
+  https://www.youtube.com/watch?v=nN4K8xA8ShM
+  http://cs.indstate.edu/cpothineni/alg.pdf
