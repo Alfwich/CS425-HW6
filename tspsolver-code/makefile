@@ -6,9 +6,9 @@ TARGET = executable.x
 
 all: $(TARGET)
 
-debug: CFLAGS += -g
-debug: TARGET = executable.debug.x
-debug: $(TARGET)
+prof: CFLAGS += -pg
+prof: TARGET = executable.prof.x
+prof: $(TARGET)
 	
 $(TARGET): main.cpp tspsolver.o
 	$(CC) $(CFLAGS) tspsolver.o main.cpp -o $(TARGET)
@@ -19,4 +19,4 @@ tspsolver.o: tspsolver.cpp
 clean:
 	rm *.o *.x
 
-.PHONY: debug
+.PHONY: prof
