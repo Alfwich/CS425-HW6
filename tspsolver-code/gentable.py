@@ -11,7 +11,7 @@ def main():
         print row
 
 def genRow(size, pos):
-    row = [ str(random.randint(1,2000)) for i in range(size)]
+    row = [ str(random.randint(1,10)) for i in range(size)]
     row[pos] = "-"
     return row
 

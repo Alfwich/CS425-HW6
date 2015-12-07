@@ -96,15 +96,18 @@ void PrintMatrix(const TMatrix& matrix)
     std::cout << std::endl;
 }
 
-void SolveTSP(const TMatrix& matrix)
-{
+void SolveTSP(const TMatrix& matrix) {
     CTSPSolver solver;
     SStep* solutionRoot = solver.solve(matrix.size(), matrix);
 
-    std::string sortedPath = solver.getSortedPath();
-    std::cout << "Solution Path: " << sortedPath << std::endl;
+    if(solutionRoot) {
+      std::string sortedPath = solver.getSortedPath();
+      std::cout << "Solution Path: " << sortedPath << std::endl;
 
-    int totalPathLength = solver.getTotalSteps();
-    int totalPathCost = solver.getTotalCost();
-    std::cout << "Total path length: " << totalPathLength << ", with cost: " << totalPathCost << std::endl;
+      int totalPathLength = solver.getTotalSteps();
+      int totalPathCost = solver.getTotalCost();
+      std::cout << "Total path length: " << totalPathLength << ", with cost: " << totalPathCost << std::endl;
+    } else {
+      std::cout << "Could not find a solution" << std::endl;
+    }
 }
