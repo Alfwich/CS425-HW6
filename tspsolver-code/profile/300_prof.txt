@@ -1,0 +1,253 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 50.73      0.72     0.72  1096505     0.00     0.00  TSPSolver::CTSPSolver::findMinInCol(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const
+ 34.52      1.21     0.49      307     0.00     0.00  TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const
+  6.34      1.30     0.09   912338     0.00     0.00  TSPSolver::CTSPSolver::hasSubCycles(int, int) const
+  5.64      1.38     0.08   182400     0.00     0.00  TSPSolver::CTSPSolver::findMinInRow(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const
+  2.11      1.41     0.03        1     0.03     1.41  TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&)
+  0.70      1.42     0.01      300     0.00     0.00  ReadMatrixRow(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&, unsigned long, unsigned long, std::istream&)
+  0.00      1.42     0.00     3589     0.00     0.00  void std::vector<TSPSolver::SStep::SCandidate, std::allocator<TSPSolver::SStep::SCandidate> >::_M_emplace_back_aux<TSPSolver::SStep::SCandidate const&>(TSPSolver::SStep::SCandidate const&)
+  0.00      1.42     0.00      608     0.00     0.00  TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&)
+  0.00      1.42     0.00      601     0.00     0.00  std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::operator=(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&)
+  0.00      1.42     0.00      300     0.00     0.00  std::_Rb_tree_iterator<std::pair<int const, int> > std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<int const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<int const, int> >, std::piecewise_construct_t const&, std::tuple<int const&>&&, std::tuple<>&&)
+  0.00      1.42     0.00      299     0.00     0.00  getCityName(std::string, int)
+  0.00      1.42     0.00        1     0.00     0.00  _GLOBAL__sub_I__Z8ListJoinRSt4listISsSaISsEESs
+  0.00      1.42     0.00        1     0.00     0.00  _GLOBAL__sub_I_main
+  0.00      1.42     0.00        1     0.00     0.00  ListJoin(std::list<std::string, std::allocator<std::string> >&, std::string)
+  0.00      1.42     0.00        1     0.00     0.00  TSPSolver::CTSPSolver::CTSPSolver()
+  0.00      1.42     0.00        1     0.00     0.00  TSPSolver::CTSPSolver::~CTSPSolver()
+  0.00      1.42     0.00        1     0.00     0.00  TSPSolver::CTSPSolver::getTotalCost() const
+  0.00      1.42     0.00        1     0.00     0.00  TSPSolver::CTSPSolver::getSortedPath(std::string const&) const
+  0.00      1.42     0.00        1     0.00     0.00  TSPSolver::CTSPSolver::getTotalSteps() const
+  0.00      1.42     0.00        1     0.00     0.00  std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*)
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.70% of 1.42 seconds
+
+index % time    self  children    called     name
+                0.03    1.38       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[1]     99.3    0.03    1.38       1         TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+                0.49    0.69     307/307         TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const [3]
+                0.00    0.20     608/608         TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&) [5]
+                0.00    0.00     307/912338      TSPSolver::CTSPSolver::hasSubCycles(int, int) const [6]
+                0.00    0.00     601/601         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::operator=(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [18]
+                0.00    0.00     300/300         std::_Rb_tree_iterator<std::pair<int const, int> > std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<int const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<int const, int> >, std::piecewise_construct_t const&, std::tuple<int const&>&&, std::tuple<>&&) [19]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     99.3    0.00    1.41                 SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+                0.03    1.38       1/1           TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::CTSPSolver() [24]
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::getSortedPath(std::string const&) const [27]
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::getTotalCost() const [26]
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::getTotalSteps() const [28]
+                0.00    0.00       1/1           std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*) [29]
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::~CTSPSolver() [25]
+-----------------------------------------------
+                0.49    0.69     307/307         TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+[3]     83.1    0.49    0.69     307         TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const [3]
+                0.60    0.00  914105/1096505     TSPSolver::CTSPSolver::findMinInCol(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [4]
+                0.09    0.00  912031/912338      TSPSolver::CTSPSolver::hasSubCycles(int, int) const [6]
+                0.00    0.00    3589/3589        void std::vector<TSPSolver::SStep::SCandidate, std::allocator<TSPSolver::SStep::SCandidate> >::_M_emplace_back_aux<TSPSolver::SStep::SCandidate const&>(TSPSolver::SStep::SCandidate const&) [17]
+-----------------------------------------------
+                0.12    0.00  182400/1096505     TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&) [5]
+                0.60    0.00  914105/1096505     TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const [3]
+[4]     50.7    0.72    0.00 1096505         TSPSolver::CTSPSolver::findMinInCol(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [4]
+-----------------------------------------------
+                0.00    0.20     608/608         TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+[5]     14.1    0.00    0.20     608         TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&) [5]
+                0.12    0.00  182400/1096505     TSPSolver::CTSPSolver::findMinInCol(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [4]
+                0.08    0.00  182400/182400      TSPSolver::CTSPSolver::findMinInRow(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [7]
+-----------------------------------------------
+                0.00    0.00     307/912338      TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+                0.09    0.00  912031/912338      TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const [3]
+[6]      6.3    0.09    0.00  912338         TSPSolver::CTSPSolver::hasSubCycles(int, int) const [6]
+-----------------------------------------------
+                0.08    0.00  182400/182400      TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&) [5]
+[7]      5.6    0.08    0.00  182400         TSPSolver::CTSPSolver::findMinInRow(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [7]
+-----------------------------------------------
+                0.01    0.00     300/300         ReadCostMatrixFromFile(std::basic_ifstream<char, std::char_traits<char> >&) [9]
+[8]      0.7    0.01    0.00     300         ReadMatrixRow(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&, unsigned long, unsigned long, std::istream&) [8]
+-----------------------------------------------
+                                                 <spontaneous>
+[9]      0.7    0.00    0.01                 ReadCostMatrixFromFile(std::basic_ifstream<char, std::char_traits<char> >&) [9]
+                0.01    0.00     300/300         ReadMatrixRow(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&, unsigned long, unsigned long, std::istream&) [8]
+-----------------------------------------------
+                0.00    0.00    3589/3589        TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const [3]
+[17]     0.0    0.00    0.00    3589         void std::vector<TSPSolver::SStep::SCandidate, std::allocator<TSPSolver::SStep::SCandidate> >::_M_emplace_back_aux<TSPSolver::SStep::SCandidate const&>(TSPSolver::SStep::SCandidate const&) [17]
+-----------------------------------------------
+                0.00    0.00     601/601         TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+[18]     0.0    0.00    0.00     601         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::operator=(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [18]
+-----------------------------------------------
+                0.00    0.00     300/300         TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [1]
+[19]     0.0    0.00    0.00     300         std::_Rb_tree_iterator<std::pair<int const, int> > std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<int const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<int const, int> >, std::piecewise_construct_t const&, std::tuple<int const&>&&, std::tuple<>&&) [19]
+-----------------------------------------------
+                0.00    0.00     299/299         TSPSolver::CTSPSolver::getSortedPath(std::string const&) const [27]
+[20]     0.0    0.00    0.00     299         getCityName(std::string, int) [20]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [47]
+[21]     0.0    0.00    0.00       1         _GLOBAL__sub_I__Z8ListJoinRSt4listISsSaISsEESs [21]
+-----------------------------------------------
+                0.00    0.00       1/1           __libc_csu_init [47]
+[22]     0.0    0.00    0.00       1         _GLOBAL__sub_I_main [22]
+-----------------------------------------------
+                0.00    0.00       1/1           TSPSolver::CTSPSolver::getSortedPath(std::string const&) const [27]
+[23]     0.0    0.00    0.00       1         ListJoin(std::list<std::string, std::allocator<std::string> >&, std::string) [23]
+-----------------------------------------------
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[24]     0.0    0.00    0.00       1         TSPSolver::CTSPSolver::CTSPSolver() [24]
+-----------------------------------------------
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[25]     0.0    0.00    0.00       1         TSPSolver::CTSPSolver::~CTSPSolver() [25]
+-----------------------------------------------
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[26]     0.0    0.00    0.00       1         TSPSolver::CTSPSolver::getTotalCost() const [26]
+-----------------------------------------------
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[27]     0.0    0.00    0.00       1         TSPSolver::CTSPSolver::getSortedPath(std::string const&) const [27]
+                0.00    0.00     299/299         getCityName(std::string, int) [20]
+                0.00    0.00       1/1           ListJoin(std::list<std::string, std::allocator<std::string> >&, std::string) [23]
+-----------------------------------------------
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[28]     0.0    0.00    0.00       1         TSPSolver::CTSPSolver::getTotalSteps() const [28]
+-----------------------------------------------
+                                  18             std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*) [29]
+                0.00    0.00       1/1           SolveTSP(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [2]
+[29]     0.0    0.00    0.00       1+18      std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*) [29]
+                                  18             std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*) [29]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [21] _GLOBAL__sub_I__Z8ListJoinRSt4listISsSaISsEESs [24] TSPSolver::CTSPSolver::CTSPSolver() [27] TSPSolver::CTSPSolver::getSortedPath(std::string const&) const
+  [22] _GLOBAL__sub_I_main    [25] TSPSolver::CTSPSolver::~CTSPSolver() [28] TSPSolver::CTSPSolver::getTotalSteps() const
+  [20] getCityName(std::string, int) [4] TSPSolver::CTSPSolver::findMinInCol(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [17] void std::vector<TSPSolver::SStep::SCandidate, std::allocator<TSPSolver::SStep::SCandidate> >::_M_emplace_back_aux<TSPSolver::SStep::SCandidate const&>(TSPSolver::SStep::SCandidate const&)
+   [8] ReadMatrixRow(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&, unsigned long, unsigned long, std::istream&) [7] TSPSolver::CTSPSolver::findMinInRow(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int) const [18] std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::operator=(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&)
+  [23] ListJoin(std::list<std::string, std::allocator<std::string> >&, std::string) [26] TSPSolver::CTSPSolver::getTotalCost() const [19] std::_Rb_tree_iterator<std::pair<int const, int> > std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<int const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<int const, int> >, std::piecewise_construct_t const&, std::tuple<int const&>&&, std::tuple<>&&)
+   [5] TSPSolver::CTSPSolver::align(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >&) [6] TSPSolver::CTSPSolver::hasSubCycles(int, int) const [29] std::_Rb_tree<int, std::pair<int const, int>, std::_Select1st<std::pair<int const, int> >, std::less<int>, std::allocator<std::pair<int const, int> > >::_M_erase(std::_Rb_tree_node<std::pair<int const, int> >*)
+   [1] TSPSolver::CTSPSolver::solve(int, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&) [3] TSPSolver::CTSPSolver::findCandidate(std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > const&, int&, int&) const
