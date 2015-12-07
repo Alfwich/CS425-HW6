@@ -15,17 +15,12 @@ void SolveTSP(const TMatrix& matrix); // Solve a cost matrix
 
 int main(int argc, char** argv)
 {
-    char yn;
-    std::cout << "Read const matrix from a file? (Y/N): ";
-    std::cin >> yn;
 
-    const bool readFromFile = (yn == 'Y' || yn == 'y');
+    const bool readFromFile = (argc == 2);
     TMatrix matrix;
 
     if (readFromFile) {
-        std::string filename;
-        std::cout << "Enter filename: ";
-        std::cin >> filename;
+        std::string filename = std::string(argv[1]);
 
         std::ifstream ifs;
         ifs.open(filename);
