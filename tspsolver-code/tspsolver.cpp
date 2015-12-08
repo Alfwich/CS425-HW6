@@ -28,6 +28,7 @@
 #include <string>
 #include <math.h>
 #include "tspsolver.h"
+#include "utils.h"
 
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
 #define MAX_DOUBLE std::numeric_limits<double>::max()
