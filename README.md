@@ -1,6 +1,16 @@
 # CS425-HW6
+Solution to the Traveling Salesman Problem using a greedy branch-and-bound inclusion-exclusion algorithm.
+
+# Contents
+There are two implementations included:
+* Serial: Adaptation of the algorithm from [TSP Solver Generator](http://tspsg.info/) to execute command line.
+* Parallel: Extension of the serial version to adopt OpenMP constructs to make useage of parallel resources.
+
+# Useage
+Both the serial and parallel version had a python driver in the root of the folder to demonstrate their performance.
 
 #Resources
+* [Algorithm Basis](https://github.com/leppa/tspsg)
 * [TSP Wiki Link](https://simple.wikipedia.org/wiki/Travelling_salesman_problem)
 * [B&B Wiki Link](https://en.wikipedia.org/wiki/Branch_and_bound)
 * [CS Document covering B&B TSP](http://cs.indstate.edu/cpothineni/alg.pdf)
