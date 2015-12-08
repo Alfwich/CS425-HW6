@@ -10,7 +10,6 @@
 
 using namespace TSPSolver;
 
-TMatrix ReadCostMatrix(); // Read in a cost matrix from the user
 TMatrix ReadCostMatrixFromFile(std::ifstream& file); // Read in a cost matrix from a file
 void ReadMatrixRow(TMatrix& matrix, size_t row, size_t numCities, std::istream& is = std::cin);
 void SolveTSP(const TMatrix& matrix, int numThreads); // Solve a cost matrix
@@ -37,25 +36,8 @@ int main(int argc, char** argv) {
     matrix = ReadCostMatrixFromFile(ifs);
     ifs.close();
 
-    std::cout << "Read matrix: " << std::endl;
-    PrintMatrix(matrix);
     SolveTSP(matrix, numThreads);
     return 0;
-}
-
-TMatrix ReadCostMatrix()
-{
-    size_t numCities;
-    std::cout << "Enter the number of cities: ";
-    std::cin >> numCities;
-
-    TMatrix matrix(numCities, std::vector<double>(numCities));
-    for (size_t i = 0; i < numCities; ++i) {
-        std::cout << "Enter elements of row " << i << " : ";
-        ReadMatrixRow(matrix, i, numCities);
-    }
-
-    return matrix;
 }
 
 TMatrix ReadCostMatrixFromFile(std::ifstream& file)
