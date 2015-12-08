@@ -35,6 +35,7 @@
 const int numThreads = 4;
 
 // Join a list of strings by separator
+namespace {
 std::string ListJoin(std::list<std::string>& list, std::string separator=" ") {
   std::ostringstream oss;
   std::copy(list.begin(), std::prev(list.end()), std::ostream_iterator<std::string>(oss, separator.c_str()));
@@ -46,6 +47,7 @@ std::string getCityName(std::string prefix, int index) {
   std::stringstream ss;
   ss << prefix << " " << index;
   return ss.str();
+}
 }
 
 namespace TSPSolver {
@@ -126,9 +128,6 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     SStep *step = new SStep(); // Initial node for the solution
     step->matrix = task; // Copy the initial cost matrix
 
-    normalize(step->matrix); // Replace the infinity references in the cost matrix
-                             // by the maximum available double value.
-
     step->price = align(step->matrix); // align the cost matrix and assign a lower bound
     root = step; // Sets the root node for the tree
 
@@ -186,9 +185,6 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         step->candidate.nCol = nCol;
         step->plNode = left;
         step->prNode = right;
-
-        // This matrix is not used anymore. Restoring infinities back.
-        denormalize(step->matrix);
 
         // Route with (nRow, nCol) path is cheaper
         if (right->price <= left->price) {
@@ -295,18 +291,6 @@ void CTSPSolver::deleteTree(SStep *&root) {
     }
 }
 
-// Replaces every instance of MAX_DOUBLE with INFINITY in the cost matrix
-// matrix: The cost matrix
-void CTSPSolver::denormalize(TMatrix &matrix) const {
-    for (int r = 0; r < nCities; r++) {
-        for (int c = 0; c < nCities; c++) {
-            if (matrix.at(r).at(c) == MAX_DOUBLE) {
-                matrix[r][c] = INFINITY;
-            }
-        }
-    }
-}
-
 // Return an vector of canidate path selections
 std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
     nRow = -1;
@@ -407,18 +391,6 @@ bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
     }
 
     return false;
-}
-
-// Replaces every instance of INFINITY with MAX_DOUBLE in the cost matrix
-// matrix: The cost matrix
-void CTSPSolver::normalize(TMatrix &matrix) const {
-    for (int r = 0; r < nCities; r++) {
-        for (int c = 0; c < nCities; c++) {
-            if (matrix.at(r).at(c) == INFINITY) {
-                matrix[r][c] = MAX_DOUBLE;
-            }
-        }
-    }
 }
 
 // matrix: The cost matrix
