@@ -134,10 +134,16 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     nCities = numCities;
     SStep *step = new SStep(); // Initial node for the solution
     step->matrix = task;       // Copy the initial cost matrix
+    std::cout << "Initial cost matrix for algorithm:" << std::endl;
+    PrintMatrix(task);
 
     // Align the matrix and set the price of the first step to a lower bound for the
     // entire algorithm.
     step->price = align(step->matrix);
+
+    std::cout << "Cost matrix after first align" << std::endl;
+    PrintMatrix(task);
+    std::cout << "With initial lower bound of " << step->price << std::endl;
     root = step;
 
     SStep *left, *right;
@@ -146,6 +152,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     double check = INFINITY;
     total = 0;
     while (route.size() < nCities) {
+        std::cout << std::endl << "=== Step " << route.size() << "===" << std::endl;
         // For this step setup the alternative paths while also setting the nRow nCol for the next transition
         step->alts = findCandidate(step->matrix, nRow, nCol);
 
@@ -153,6 +160,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // eliminate the currently considered path as we can determine this is not within
         // the solution. For each align we need to update the currenly lower bound.
         while (hasSubCycles(nRow,nCol)) {
+            std::cout << "The candidate will cause a cycle in the current route. Find new candidate" << std::endl;
             step->matrix[nRow][nCol] = INFINITY; // Eliminate path from consideration
             step->price += align(step->matrix);  // Update lower bound
             step->alts = findCandidate(step->matrix,nRow,nCol); // Get new best path
@@ -188,6 +196,9 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         right->matrix[nCol][nRow] = INFINITY;
         right->matrix[nRow][nCol] = INFINITY;
 
+        std::cout << "Create right(inclusion) child with cost: " << right->price << ", matrix:" << std::endl;
+        PrintMatrix(right->matrix);
+
         // Create the left child for the current step and invalidate nRow and nCol
         left = new SStep();
         left->pNode = step;
@@ -199,6 +210,9 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // Update the lower bound for this cost matrix with the path excluded
         left->price = step->price + align(left->matrix);
 
+        std::cout << "Create left(exclusion) child with cost: " << left->price << ", matrix:" << std::endl;
+        PrintMatrix(left->matrix);
+
         // Book-keeping for the old GUI program
         step->candidate.nRow = nRow;
         step->candidate.nCol = nCol;
@@ -208,8 +222,10 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // If the right price is cheaper or equal then we will include the path into the solution
         // and add this transition to the route. Then we will repeat the algorithm from the right child.
         if (right->price <= left->price) {
+            std::cout << "Inclusion has a better lower bound and we will include this path into solution." << std::endl;
             step->next = SStep::RightBranch;
             step = right;
+            std::cout << "Adding the path: " << nRow << ":" << nCol << ", into the solution" << std::endl;
             route[nRow] = nCol;
 
             if (firstStep) {
@@ -220,6 +236,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // The exclusion path is cheaper and we will repeat the algorithm using the left child.
         // IMPORTANT: We do not modify the route
         } else {
+            std::cout << "Exclusion has a better lower bound and we will exclude this path from the solution" << std::endl;
             step->next = SStep::LeftBranch;
             step = left;
 
@@ -351,6 +368,8 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
             }
         }
     }
+
+    std::cout << "Candidate path for algorithm: " << nRow << ":" << nCol << ", with number of alternative paths: " << alts.size() << std::endl;
 
     return alts;
 }
