@@ -32,8 +32,6 @@
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
-const int numThreads = 4;
-
 // Join a list of strings by separator
 namespace {
 std::string ListJoin(std::list<std::string>& list, std::string separator=" ") {
@@ -57,7 +55,15 @@ namespace TSPSolver {
  * \param parent A parent object.
  */
 CTSPSolver::CTSPSolver() {
+  numThreads = 4;
+  total = 0;
+  totalCost = 0;
+}
 
+CTSPSolver::CTSPSolver(int numThreads) {
+  this->numThreads = numThreads;
+  total = 0;
+  totalCost = 0;
 }
 
 /*!
@@ -234,7 +240,7 @@ double CTSPSolver::align(TMatrix &matrix) {
 
     // Do row subtraction from the matrix with the min row value per row
     for (int k = 0; k < nCities; k++) {
-        min = findMinInRow(k, matrix, numThreads);
+        min = findMinInRow(k, matrix);
         if (min > 0) {
             r += min;
             if (min < MAX_DOUBLE) {
@@ -245,7 +251,7 @@ double CTSPSolver::align(TMatrix &matrix) {
 
     // Do col subtraction from the matrix with the min col value per col
     for (int k = 0; k < nCities; k++) {
-        min = findMinInCol(k, matrix, numThreads);
+        min = findMinInCol(k, matrix);
         if (min > 0) {
             r += min;
             if (min < MAX_DOUBLE) {
@@ -305,7 +311,7 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
         for (int c = 0; c < nCities; c++) {
             // Choose edges that are the min for the row and column
             if (matrix.at(r).at(c) == 0) {
-                sum = findMinInRow(r, matrix, numThreads, c) + findMinInCol(c, matrix, numThreads, r);
+                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
 
                 // If we found another min value for the row or col then reset the alternatives
                 // vector and set the next row and col to this node
@@ -330,7 +336,7 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
 // nCol: The col number
 // matrix: The cost matrix
 // exr: row to exclude from the min calculation
-double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int numThreads, int exr) const {
+double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const {
     double total_min = INFINITY;
 
     #pragma omp parallel num_threads(numThreads)
@@ -353,7 +359,7 @@ double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int numThreads,
 // nRow: The row number
 // matrix: The cost matrix
 // exc: column to exclude from the min calculation
-double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int numThreads, int exc) const {
+double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const {
     double total_min = INFINITY;
 
     #pragma omp parallel num_threads(numThreads)

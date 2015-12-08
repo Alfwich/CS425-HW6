@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <chrono>
+#include <stdlib.h> 
 
 using namespace TSPSolver;
 
@@ -12,33 +13,33 @@ TMatrix ReadCostMatrixFromFile(std::ifstream& file); // Read in a cost matrix fr
 void ReadMatrixRow(TMatrix& matrix, size_t row, size_t numCities, std::istream& is = std::cin);
 
 void PrintMatrix(const TMatrix& matrix); // Print a cost matrix
-void SolveTSP(const TMatrix& matrix); // Solve a cost matrix
+void SolveTSP(const TMatrix& matrix, int numThreads); // Solve a cost matrix
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 
-    const bool readFromFile = (argc == 2);
+    if(argc != 3) { 
+        std::cout << "useage: ./executable.x {cost_file} {num_threads}" << std::endl;
+        return -1;
+    }
+
     TMatrix matrix;
 
-    if (readFromFile) {
-        std::string filename = std::string(argv[1]);
+    std::string filename = std::string(argv[1]);
+    int numThreads = atoi(argv[2]);
 
-        std::ifstream ifs;
-        ifs.open(filename);
-        if (!ifs.good()) {
-            std::cerr << "Error opening filename: " << filename;
-            exit(EXIT_FAILURE);
-        }
-
-        matrix = ReadCostMatrixFromFile(ifs);
-        ifs.close();
-    } else {
-        matrix = ReadCostMatrix();
+    std::ifstream ifs;
+    ifs.open(filename);
+    if (!ifs.good()) {
+        std::cerr << "Error opening filename: " << filename;
+        exit(EXIT_FAILURE);
     }
+
+    matrix = ReadCostMatrixFromFile(ifs);
+    ifs.close();
 
     std::cout << "Read matrix: " << std::endl;
     PrintMatrix(matrix);
-    SolveTSP(matrix);
+    SolveTSP(matrix, numThreads);
     return 0;
 }
 
@@ -97,8 +98,8 @@ void PrintMatrix(const TMatrix& matrix)
     std::cout << std::endl;
 }
 
-void SolveTSP(const TMatrix& matrix) {
-    CTSPSolver solver;
+void SolveTSP(const TMatrix& matrix, int numThreads) {
+    CTSPSolver solver(numThreads);
     SStep* solutionRoot;
 
     auto start = std::chrono::high_resolution_clock::now();
