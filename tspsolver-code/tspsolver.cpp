@@ -31,6 +31,8 @@
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
 #define MAX_DOUBLE std::numeric_limits<double>::max()
 
+const int numThreads = 4;
+
 // Join a list of strings by separator
 std::string ListJoin(std::list<std::string>& list, std::string separator=" ") {
   std::ostringstream oss;
@@ -246,7 +248,7 @@ double CTSPSolver::align(TMatrix &matrix) {
 
     // Do col subtraction from the matrix with the min col value per col
     for (int k = 0; k < nCities; k++) {
-        min = findMinInCol(k, matrix);
+        min = findMinInCol(k, matrix, numThreads);
         if (min > 0) {
             r += min;
             if (min < MAX_DOUBLE) {
@@ -318,7 +320,7 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
         for (int c = 0; c < nCities; c++) {
             // Choose edges that are the min for the row and column
             if (matrix.at(r).at(c) == 0) {
-                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
+                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, numThreads, r);
 
                 // If we found another min value for the row or col then reset the alternatives
                 // vector and set the next row and col to this node
@@ -343,15 +345,29 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
 // nCol: The col number
 // matrix: The cost matrix
 // exr: row to exclude from the min calculation
-double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int exr) const {
-    double min = INFINITY;
-    for (int k = 0; k < nCities; k++) {
-        if ((k != exr) && (min > matrix.at(k).at(nCol))) {
-            min = matrix.at(k).at(nCol);
+double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int numThreads, int exr) const {
+    double total_min = INFINITY;
+
+    #pragma omp parallel num_threads(numThreads)
+    {
+      double min = INFINITY;
+      #pragma omp for
+      for (int k = 0; k < nCities; k++) {
+          if ((k != exr) && (min > matrix.at(k).at(nCol))) {
+              min = matrix.at(k).at(nCol);
+          }
+      }
+
+      #pragma omp critical
+      { 
+        if(min < total_min) {
+          total_min = min;
         }
+      }
+
     }
 
-    return (min == INFINITY) ? 0 : min;
+    return (total_min == INFINITY) ? 0 : total_min;
 }
 
 // nRow: The row number
