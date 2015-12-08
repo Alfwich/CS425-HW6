@@ -5,12 +5,14 @@ import re
 EXECUTABLE = "./executable.x"
 USAGE = "usage: " + sys.argv[0] + " <num_threads>"
 
-TESTFILES = ["test.50.txt", "test.100.txt", "test.250.txt"]
+TESTAMOUNTS = [50, 250]
+TESTFORMAT = "test.%d.txt"
+TESTFILES = map(lambda x: TESTFORMAT % x, TESTAMOUNTS)
 TESTFILEDIR = "./test/"
 
 def parseTestOutput(output):
     output = output.splitlines()
-    
+
     duration = [int(s) for s in output[0].split(' ') if s.isdigit()][0]
     pathlen = [int(s) for s in output[-1].split(' ') if s.isdigit()][0]
 
@@ -34,7 +36,7 @@ def main():
     numThreads = sys.argv[1]
 
     for filename in TESTFILES:
-        results = [runTest(TESTFILEDIR + filename, numThreads) for i in range(0, 3)]
+        results = [runTest(TESTFILEDIR + filename, numThreads) for i in range(len(TESTFILES))]
         durations = [item[0] for item in results]
         pathlens = [item[1] for item in results]
 
