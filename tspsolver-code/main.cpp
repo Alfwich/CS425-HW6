@@ -1,4 +1,3 @@
-#include "tspsolver.h"
 #include <vector>
 #include <iostream>
 #include <cstdlib>
@@ -6,13 +5,14 @@
 #include <chrono>
 #include <stdlib.h> 
 
+#include "tspsolver.h"
+#include "utils.h"
+
 using namespace TSPSolver;
 
 TMatrix ReadCostMatrix(); // Read in a cost matrix from the user
 TMatrix ReadCostMatrixFromFile(std::ifstream& file); // Read in a cost matrix from a file
 void ReadMatrixRow(TMatrix& matrix, size_t row, size_t numCities, std::istream& is = std::cin);
-
-void PrintMatrix(const TMatrix& matrix); // Print a cost matrix
 void SolveTSP(const TMatrix& matrix, int numThreads); // Solve a cost matrix
 
 int main(int argc, char** argv) {
@@ -83,19 +83,6 @@ void ReadMatrixRow(TMatrix& matrix, size_t row, size_t numCities, std::istream& 
             matrix[row][i] = atof(tmp.c_str());
         }
     }
-}
-
-void PrintMatrix(const TMatrix& matrix)
-{
-    for (auto row : matrix) {
-        for (auto col : row) {
-            std::cout << col << " ";
-        }
-
-        std::cout << std::endl;
-    }
-
-    std::cout << std::endl;
 }
 
 void SolveTSP(const TMatrix& matrix, int numThreads) {
