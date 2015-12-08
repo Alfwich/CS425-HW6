@@ -18,6 +18,7 @@ def parseTestOutput(output):
     return (duration, pathlen)
 
 def runTest(testFilename):
+    print("Performing test on: %s" % testFilename)
     tempfile = ".results.tmp"
     command = EXECUTABLE + " " + testFilename + " > " + tempfile
     os.system(command)
@@ -28,14 +29,15 @@ def runTest(testFilename):
         return parseTestOutput(results)
 
 def main():
+    os.system("make")
     for filename in TESTFILES:
-        results = [runTest(TESTFILEDIR + filename, numThreads) for i in range(len(TESTFILES))]
+        results = [runTest(TESTFILEDIR + filename) for i in range(3)]
         durations = [item[0] for item in results]
         pathlens = [item[1] for item in results]
 
         avgDuration = sum(durations) / float(len(durations))
         print "average duration for test file {0}: {1} ms".format(filename, str(avgDuration))
-        print "path length: {0}".format(pathlens[0])
+        print "path length: {0}\n".format(pathlens[0])
 
 if __name__ == "__main__":
     main()
