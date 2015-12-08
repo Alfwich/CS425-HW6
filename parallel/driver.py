@@ -43,7 +43,7 @@ def main():
         pathlens = [item[1] for item in results]
 
         avgDuration = sum(durations) / float(len(durations))
-        print "average duration for test file {0}: {1} ms".format(filename, str(avgDuration))
+        print "average duration for test file {0}: {1} ms using {2} threads".format(filename, str(avgDuration), str(numThreads))
         print "path length: {0}\n".format(pathlens[0])
 
 if __name__ == "__main__":
