@@ -132,7 +132,7 @@ private:
     void denormalize(TMatrix &matrix) const;
     std::vector<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
     double findMinInCol(int nCol, const TMatrix &matrix, int numThreads, int exr = -1) const;
-    double findMinInRow(int nRow, const TMatrix &matrix, int exc = -1) const;
+    double findMinInRow(int nRow, const TMatrix &matrix, int numThreads, int exc = -1) const;
     void finishRoute();
     bool hasSubCycles(int nRow, int nCol) const;
     void normalize(TMatrix &matrix) const;

@@ -26,6 +26,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <math.h>
 #include "tspsolver.h"
 
 //! \internal \brief A short for maximum double, used internally in the solution algorithm.
@@ -237,7 +238,7 @@ double CTSPSolver::align(TMatrix &matrix) {
 
     // Do row subtraction from the matrix with the min row value per row
     for (int k = 0; k < nCities; k++) {
-        min = findMinInRow(k, matrix);
+        min = findMinInRow(k, matrix, numThreads);
         if (min > 0) {
             r += min;
             if (min < MAX_DOUBLE) {
@@ -320,7 +321,7 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
         for (int c = 0; c < nCities; c++) {
             // Choose edges that are the min for the row and column
             if (matrix.at(r).at(c) == 0) {
-                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, numThreads, r);
+                sum = findMinInRow(r, matrix, numThreads, c) + findMinInCol(c, matrix, numThreads, r);
 
                 // If we found another min value for the row or col then reset the alternatives
                 // vector and set the next row and col to this node
@@ -359,12 +360,7 @@ double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int numThreads,
       }
 
       #pragma omp critical
-      { 
-        if(min < total_min) {
-          total_min = min;
-        }
-      }
-
+      total_min = fmin(min, total_min);
     }
 
     return (total_min == INFINITY) ? 0 : total_min;
@@ -373,15 +369,24 @@ double CTSPSolver::findMinInCol(int nCol, const TMatrix &matrix, int numThreads,
 // nRow: The row number
 // matrix: The cost matrix
 // exc: column to exclude from the min calculation
-double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const {
-    double min = INFINITY;
-    for (int k = 0; k < nCities; k++) {
-        if (((k != exc)) && (min > matrix.at(nRow).at(k))) {
-            min = matrix.at(nRow).at(k);
+double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int numThreads, int exc) const {
+    double total_min = INFINITY;
+
+    #pragma omp parallel num_threads(numThreads)
+    {
+        double min = INFINITY;
+        #pragma omp for
+        for (int k = 0; k < nCities; k++) {
+            if (((k != exc)) && (min > matrix.at(nRow).at(k))) {
+                min = matrix.at(nRow).at(k);
+            }
         }
+
+        #pragma omp critical
+        total_min = fmin(min, total_min);
     }
 
-    return (min == INFINITY) ? 0 : min;
+    return (total_min == INFINITY) ? 0 : total_min;
 }
 
 // Detects if a route has sub cycles
