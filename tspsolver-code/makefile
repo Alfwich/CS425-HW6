@@ -11,11 +11,14 @@ prof: CFLAGS += -pg
 prof: TARGET = executable.prof.x
 prof: $(TARGET)
 	
-$(TARGET): main.cpp tspsolver.o
-	$(CC) $(CFLAGS) $(OPTS) tspsolver.o main.cpp -o $(TARGET)
+$(TARGET): main.cpp tspsolver.o utils.o
+	$(CC) $(CFLAGS) $(OPTS) tspsolver.o utils.o main.cpp -o $(TARGET)
 
 tspsolver.o: tspsolver.cpp
 	$(CC) $(CFLAGS) $(OPTS) tspsolver.cpp -c -o tspsolver.o
+
+utils.o: utils.cpp
+	$(CC) $(CFLAGS) $(OPTS) utils.cpp -c -o utils.o
 
 clean:
 	rm *.o *.x
