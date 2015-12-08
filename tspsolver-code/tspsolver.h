@@ -112,6 +112,7 @@ public:
     static std::string getVersionId();
 
     CTSPSolver();
+    CTSPSolver(int numThreads);
     std::string getSortedPath(const std::string &separator = std::string(" -> ")) const;
     int getTotalSteps() const;
     int getTotalCost() const;
@@ -124,6 +125,7 @@ private:
     size_t nCities;
     int total;
     int totalCost;
+    int numThreads;
     SStep *root;
     std::map<int,int> route;
 
@@ -131,8 +133,8 @@ private:
     void deleteTree(SStep *&root);
     void denormalize(TMatrix &matrix) const;
     std::vector<SStep::SCandidate> findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const;
-    double findMinInCol(int nCol, const TMatrix &matrix, int numThreads, int exr = -1) const;
-    double findMinInRow(int nRow, const TMatrix &matrix, int numThreads, int exc = -1) const;
+    double findMinInCol(int nCol, const TMatrix &matrix, int exr = -1) const;
+    double findMinInRow(int nRow, const TMatrix &matrix, int exc = -1) const;
     void finishRoute();
     bool hasSubCycles(int nRow, int nCol) const;
     void normalize(TMatrix &matrix) const;
