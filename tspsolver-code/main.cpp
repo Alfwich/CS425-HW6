@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <chrono>
 
 using namespace TSPSolver;
 
@@ -98,7 +99,13 @@ void PrintMatrix(const TMatrix& matrix)
 
 void SolveTSP(const TMatrix& matrix) {
     CTSPSolver solver;
-    SStep* solutionRoot = solver.solve(matrix.size(), matrix);
+    SStep* solutionRoot;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    solutionRoot = solver.solve(matrix.size(), matrix);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+    std::cout << "Finding the shortest path took " << duration << " milliseconds\n";
 
     if(solutionRoot) {
       std::string sortedPath = solver.getSortedPath();
