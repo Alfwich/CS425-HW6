@@ -133,12 +133,14 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
 
     nCities = numCities;
     SStep *step = new SStep(); // Initial node for the solution
-    step->matrix = task; // Copy the initial cost matrix
+    step->matrix = task;       // Copy the initial cost matrix
 
-    step->price = align(step->matrix); // align the cost matrix and assign a lower bound
-    root = step; // Sets the root node for the tree
+    // Align the matrix and set the price of the first step to a lower bound for the
+    // entire algorithm.
+    step->price = align(step->matrix);
+    root = step;
 
-    SStep *left, *right; // Some config
+    SStep *left, *right;
     int nRow, nCol;
     bool firstStep = true;
     double check = INFINITY;
@@ -147,25 +149,28 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         // For this step setup the alternative paths while also setting the nRow nCol for the next transition
         step->alts = findCandidate(step->matrix, nRow, nCol);
 
-        // Continuously refine the step's cost matrix while we have subcycles
-        // Updates the price and alternatives
+        // Continually align the matrix while the path has any subcycles. We also
+        // eliminate the currently considered path as we can determine this is not within
+        // the solution. For each align we need to update the currenly lower bound.
         while (hasSubCycles(nRow,nCol)) {
-            step->matrix[nRow][nCol] = INFINITY;
-            step->price += align(step->matrix);
-            step->alts = findCandidate(step->matrix,nRow,nCol);
+            step->matrix[nRow][nCol] = INFINITY; // Eliminate path from consideration
+            step->price += align(step->matrix);  // Update lower bound
+            step->alts = findCandidate(step->matrix,nRow,nCol); // Get new best path
         }
 
-        // A path could not be generated
+        // A path could not be generated without subcycles; our algorithm has failed
         if ((nRow == -1) || (nCol == -1)) {
             return NULL;
         }
 
-        // Create the right child for the current step. This will invalidate the nRow and nCol
-        // for the right child and update the right child's cost. We also invalidate the nRow, nCol
-        // from further consideration
+        // Create the inclusion transition. This will compute a new cost matrix with the
+        // the selected path as being within the soulution.
         right = new SStep();
         right->pNode = step;
         right->matrix = step->matrix;
+
+        // Remove the to and from paths for the respective cities as we are selecting a path.
+        // This effectivly reduces the matrix from a NxN => (N-1)x(N-1)
         for (int k = 0; k < nCities; k++) {
             if (k != nCol) {
                 right->matrix[nRow][k] = INFINITY;
@@ -175,9 +180,11 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
                 right->matrix[k][nCol] = INFINITY;
             }
         }
+
+        // By considering the path compute the new lower bound for the matrix
         right->price = step->price + align(right->matrix);
 
-        // Forbid the selected route to exclude its reuse in next steps.
+        // Remove the path to and symetrical path from from the cost matrix
         right->matrix[nCol][nRow] = INFINITY;
         right->matrix[nRow][nCol] = INFINITY;
 
@@ -185,15 +192,21 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         left = new SStep();
         left->pNode = step;
         left->matrix = step->matrix;
+
+        // Exclude this path from the solution
         left->matrix[nRow][nCol] = INFINITY;
+
+        // Update the lower bound for this cost matrix with the path excluded
         left->price = step->price + align(left->matrix);
 
+        // Book-keeping for the old GUI program
         step->candidate.nRow = nRow;
         step->candidate.nCol = nCol;
         step->plNode = left;
         step->prNode = right;
 
-        // Route with (nRow, nCol) path is cheaper
+        // If the right price is cheaper or equal then we will include the path into the solution
+        // and add this transition to the route. Then we will repeat the algorithm from the right child.
         if (right->price <= left->price) {
             step->next = SStep::RightBranch;
             step = right;
@@ -204,7 +217,8 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
                 firstStep = false;
             }
 
-        // Route without (nRow,nCol) path is cheaper
+        // The exclusion path is cheaper and we will repeat the algorithm using the left child.
+        // IMPORTANT: We do not modify the route
         } else {
             step->next = SStep::LeftBranch;
             step = left;
@@ -218,6 +232,8 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
         total++;
     }
 
+    // On out first transition the step price is an estimated lower bound for the entire algorithm.
+    // If our final steps price is greater or equal then we cannot guarantee the solution is optimum.
     mayNotBeOptimal = (check < step->price);
     totalCost = step->price;
 
@@ -298,30 +314,35 @@ void CTSPSolver::deleteTree(SStep *&root) {
     }
 }
 
-// Return an vector of canidate path selections
+// Using the cost matrix provided configure nRow and nCol to locate the canidate that maximises
+// the difference between the inclusion and exclusion branch. We return a vector of alternative
+// canidate paths
 std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, int &nRow, int &nCol) const {
     nRow = -1;
     nCol = -1;
     std::vector<SStep::SCandidate> alts;
     SStep::SCandidate cand;
+
+    // Our best difference so far
     double h = -1;
     double sum;
 
-    // For each row and col check for canidate paths
+    // For each row and col check for canidate paths. Because we have performed aligns to the
+    // cost matrix we are only concerned with 0 values
     for (int r = 0; r < nCities; r++) {
         for (int c = 0; c < nCities; c++) {
-            // Choose edges that are the min for the row and column
             if (matrix.at(r).at(c) == 0) {
+                // Find the cost change for the exclusion branch by selecting this nRow, nCol
                 sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
 
-                // If we found another min value for the row or col then reset the alternatives
-                // vector and set the next row and col to this node
+                // If the difference is greater then we want to choose this path.
                 if (sum > h) {
                     h = sum;
                     nRow = r;
                     nCol = c;
                     alts.clear();
-                // If there is an equivalent path without subcycles push it into the alternative vector
+                // Alternativly we are finding paths of equal difference and will store these. The
+                // optimum soulution could use one of these paths rathen than the one we have selected.
                 } else if ((sum == h) && !hasSubCycles(r ,c)) {
                     cand.nRow = r;
                     cand.nCol = c;
@@ -380,19 +401,21 @@ double CTSPSolver::findMinInRow(int nRow, const TMatrix &matrix, int exc) const 
     return (total_min == INFINITY) ? 0 : total_min;
 }
 
-// Detects if a route has sub cycles
+// Detects if a route has sub cycles by making sure that all destination
+// paths do not point to the origin
 bool CTSPSolver::hasSubCycles(int nRow, int nCol) const {
     if ((nRow < 0) || (nCol < 0) || route.empty() || !(route.size() < nCities - 1) || !route.count(nCol)) {
         return false;
     }
 
-    int i = nCol;
+    int destination = nCol;
     while(true) {
-        if ((i = route.at(i)) == nRow) {
+        destination = route.at(destination);
+        if (destination == nRow) {
             return true;
         }
 
-        if (!route.count(i)) {
+        if (!route.count(destination)) {
             return false;
         }
     }
