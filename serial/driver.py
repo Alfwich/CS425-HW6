@@ -3,7 +3,6 @@ import sys
 import re
 
 EXECUTABLE = "./executable.x"
-USAGE = "usage: " + sys.argv[0] + " <num_threads>"
 
 TESTAMOUNTS = [50, 250]
 TESTFORMAT = "test.%d.txt"
@@ -18,23 +17,17 @@ def parseTestOutput(output):
 
     return (duration, pathlen)
 
-def runTest(testFilename, numThreads):
+def runTest(testFilename):
     tempfile = ".results.tmp"
-    command = EXECUTABLE + " " + testFilename + " " + numThreads + " > " + tempfile
+    command = EXECUTABLE + " " + testFilename + " > " + tempfile
     os.system(command)
-    
+
     with open(tempfile, 'r') as f:
         results = f.read()
         os.remove(tempfile)
         return parseTestOutput(results)
 
 def main():
-    if len(sys.argv) < 2:
-        print(USAGE)
-        sys.exit(1)
-    
-    numThreads = sys.argv[1]
-
     for filename in TESTFILES:
         results = [runTest(TESTFILEDIR + filename, numThreads) for i in range(len(TESTFILES))]
         durations = [item[0] for item in results]

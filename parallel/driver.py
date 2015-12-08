@@ -22,7 +22,7 @@ def runTest(testFilename, numThreads):
     tempfile = ".results.tmp"
     command = EXECUTABLE + " " + testFilename + " " + numThreads + " > " + tempfile
     os.system(command)
-    
+
     with open(tempfile, 'r') as f:
         results = f.read()
         os.remove(tempfile)
@@ -32,7 +32,7 @@ def main():
     if len(sys.argv) < 2:
         print(USAGE)
         sys.exit(1)
-    
+
     numThreads = sys.argv[1]
 
     for filename in TESTFILES:
