@@ -1,0 +1,115 @@
+Initial cost matrix for algorithm:
+-  6  1  6  6
+10 -  2  9  4
+5  4  -  6  1
+2  3  6  -  9
+6  6  10 9  -
+
+Cost matrix after first align
+-  5  0  2  5
+8  -  0  4  2
+4  3  -  2  0
+0  1  4  -  7
+0  0  4  0  -
+
+With initial lower bound of 15
+
+=== Step 0===
+Candidate path for algorithm: 2:4, with number of alternative paths: 0
+Create right(inclusion) child with cost: 15, matrix:
+-  5  0  2  -
+8  -  0  4  -
+-  -  -  -  -
+0  1  4  -  -
+0  0  -  0  -
+
+Create left(exclusion) child with cost: 19, matrix:
+-  5  0  2  3
+8  -  0  4  0
+2  1  -  0  -
+0  1  4  -  5
+0  0  4  0  -
+
+Inclusion has a better lower bound and we will include this path into solution.
+Adding the path: 2:4, into the solution
+
+=== Step 1===
+Candidate path for algorithm: 1:2, with number of alternative paths: 0
+Create right(inclusion) child with cost: 17, matrix:
+-  3  -  0  -
+-  -  -  -  -
+-  -  -  -  -
+0  1  -  -  -
+0  0  -  0  -
+
+Create left(exclusion) child with cost: 19, matrix:
+-  5  0  2  -
+4  -  -  0  -
+-  -  -  -  -
+0  1  4  -  -
+0  0  -  0  -
+
+Inclusion has a better lower bound and we will include this path into solution.
+Adding the path: 1:2, into the solution
+
+=== Step 2===
+Candidate path for algorithm: 0:3, with number of alternative paths: 0
+Create right(inclusion) child with cost: 17, matrix:
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  1  -  -  -
+0  0  -  -  -
+
+Create left(exclusion) child with cost: 20, matrix:
+-  0  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+0  1  -  -  -
+0  0  -  0  -
+
+Inclusion has a better lower bound and we will include this path into solution.
+Adding the path: 0:3, into the solution
+
+=== Step 3===
+Candidate path for algorithm: 4:1, with number of alternative paths: 0
+The candidate will cause a cycle in the current route. Find new candidate
+Candidate path for algorithm: 3:1, with number of alternative paths: 1
+Create right(inclusion) child with cost: 18, matrix:
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+0  -  -  -  -
+
+Create left(exclusion) child with cost: 18, matrix:
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+0  -  -  -  -
+
+Inclusion has a better lower bound and we will include this path into solution.
+Adding the path: 3:1, into the solution
+
+=== Step 4===
+Candidate path for algorithm: 4:0, with number of alternative paths: 0
+Create right(inclusion) child with cost: 18, matrix:
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+
+Create left(exclusion) child with cost: 18, matrix:
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+-  -  -  -  -
+
+Inclusion has a better lower bound and we will include this path into solution.
+Adding the path: 4:0, into the solution
+Finding the shortest path took 1 milliseconds
+Solution Path: City 1 -> City 4 -> City 2 -> City 3 -> City 5 -> City 1
+Total path length: 5, with cost: 18
