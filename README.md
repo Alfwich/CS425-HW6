@@ -1,5 +1,13 @@
-# CS425-HW6
+# Sonoma State University: CS425-HW6
+# Fall 2015
+# Professor Riviore
+
+# Subject
 Solution to the Traveling Salesman Problem using a greedy branch-and-bound inclusion-exclusion algorithm.
+
+# Group Members
+* Cameron Hall
+* Arthur Wuterich
 
 # Contents
 There are two implementations included:
@@ -7,8 +15,8 @@ There are two implementations included:
 * Parallel: Extension of the serial version to adopt OpenMP constructs to make useage of parallel resources.
 
 # Useage
-Both the serial and parallel version had a python driver in the root of the folder to demonstrate their performance.
-To generate new example cost matrices use the gentable.py program in the python folder
+* Both the serial and parallel version had a python driver in the root of the folder to demonstrate their performance.
+* To generate new example cost matrices use the gentable.py program in the python folder
 
 #Resources
 * [Algorithm Basis](https://github.com/leppa/tspsg)
