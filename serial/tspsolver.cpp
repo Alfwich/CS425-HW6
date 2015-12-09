@@ -142,7 +142,7 @@ SStep* CTSPSolver::solve(int numCities, const TMatrix &task) {
     step->price = align(step->matrix);
 
     std::cout << "Cost matrix after first align" << std::endl;
-    PrintMatrix(task);
+    PrintMatrix(step->matrix);
     std::cout << "With initial lower bound of " << step->price << std::endl;
     root = step;
 
