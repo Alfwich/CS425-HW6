@@ -1,6 +1,8 @@
-# Sonoma State University: CS425-HW6
-# Fall 2015
-# Professor Riviore
+```
+Sonoma State University: CS425-HW6
+Fall 2015
+Professor Riviore
+```
 
 # Subject
 Solution to the Traveling Salesman Problem using a greedy branch-and-bound inclusion-exclusion algorithm.
