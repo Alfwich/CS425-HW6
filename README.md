@@ -8,6 +8,7 @@ There are two implementations included:
 
 # Useage
 Both the serial and parallel version had a python driver in the root of the folder to demonstrate their performance.
+To generate new example cost matrices use the gentable.py program in the python folder
 
 #Resources
 * [Algorithm Basis](https://github.com/leppa/tspsg)
