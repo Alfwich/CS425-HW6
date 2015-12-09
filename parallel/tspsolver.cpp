@@ -27,6 +27,7 @@
 #include <sstream>
 #include <string>
 #include <math.h>
+#include <omp.h>
 #include "tspsolver.h"
 #include "utils.h"
 
@@ -321,35 +322,51 @@ std::vector<SStep::SCandidate> CTSPSolver::findCandidate(const TMatrix &matrix, 
     nRow = -1;
     nCol = -1;
     std::vector<SStep::SCandidate> alts;
-    SStep::SCandidate cand;
 
-    // Our best difference so far
-    double h = -1;
-    double sum;
+    double bestMax = -1.0;
 
-    // For each row and col check for canidate paths. Because we have performed aligns to the
-    // cost matrix we are only concerned with 0 values
-    for (int r = 0; r < nCities; r++) {
-        for (int c = 0; c < nCities; c++) {
-            if (matrix.at(r).at(c) == 0) {
-                // Find the cost change for the exclusion branch by selecting this nRow, nCol
-                sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
+    #pragma omp parallel num_threads(numThreads)
+    {
 
-                // If the difference is greater then we want to choose this path.
-                if (sum > h) {
-                    h = sum;
-                    nRow = r;
-                    nCol = c;
-                    alts.clear();
-                // Alternativly we are finding paths of equal difference and will store these. The
-                // optimum soulution could use one of these paths rathen than the one we have selected.
-                } else if ((sum == h) && !hasSubCycles(r ,c)) {
-                    cand.nRow = r;
-                    cand.nCol = c;
-                    alts.push_back(cand);
-                }
-            }
+      // Our best difference so far
+      double h = -1;
+      double sum;
+      int localRow = 0, localCol = 0;
+      SStep::SCandidate cand;
+
+      // For each row and col check for canidate paths. Because we have performed aligns to the
+      // cost matrix we are only concerned with 0 values
+      #pragma omp for
+      for (int r = 0; r < nCities; r++) {
+          for (int c = 0; c < nCities; c++) {
+              if (matrix.at(r).at(c) == 0) {
+                  // Find the cost change for the exclusion branch by selecting this nRow, nCol
+                  sum = findMinInRow(r, matrix, c) + findMinInCol(c, matrix, r);
+
+                  // If the difference is greater then we want to choose this path.
+                  if (sum > h) {
+                      h = sum;
+                      localRow = r;
+                      localCol = c;
+                  // Alternativly we are finding paths of equal difference and will store these. The
+                  // optimum soulution could use one of these paths rather than the one we have selected.
+                  } else if ((sum == h) && !hasSubCycles(r ,c)) {
+                      cand.nRow = r;
+                      cand.nCol = c;
+                  }
+              }
+          }
+      }
+
+      #pragma omp critical
+      {
+        if(bestMax < h) {
+          nRow = localRow;
+          nCol = localCol;
+          bestMax = h;
         }
+
+      }
     }
 
     return alts;
